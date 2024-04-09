@@ -11,37 +11,38 @@ const graphData = [{
     y: 5,
 }]
 
-const options = {
-    title: {
-      text: 'Products in selected Category',
-      align: 'left'
-    },
-    chart: {
-        type: 'column',
-    },
-    yAxis: {
+function generateGraphOptions() {
+    const options = {
         title: {
-            text: ''
-        }
-    },
-    xAxis: {
-        title: {
-            text: 'Smartphones'
+        text: 'Products in selected Category',
+        align: 'left'
         },
-        categories: productLabels
-    },
-    series: [{
-        data: graphData
-    }],
-    
-  }
+        chart: {
+            type: 'column',
+        },
+        yAxis: {
+            title: {
+                text: 'Smartphones'
+            }
+        },
+        xAxis: {
+            categories: productLabels
+        },
+        series: [{
+            data: graphData
+        }],
+    }
+
+    return options
+}
+
 
 const GraphComponent = () => {
   return (
     <Box width={'100%'} display="flex" alignItems="center" justifyContent="center" >
         <HighchartsReact
             highcharts={Highcharts}
-            options={options}
+            options={generateGraphOptions()}
         />
     </Box>
   )
