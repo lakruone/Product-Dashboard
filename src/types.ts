@@ -5,7 +5,8 @@ export type UseFetchProps = {
 }
 
 export type FilterPanelProps = {
-    categories: string[]
+    categories: string[],
+    setGraphData: React.Dispatch<React.SetStateAction<GraphDataOptionTypes | null>>
 }
 
 export type CategoryContextProviderProps = {
@@ -30,4 +31,18 @@ export type ProductContextProviderProps = {
 export type ProductContextType = {
     products: ProductType[] | null
     setProducts: React.Dispatch<React.SetStateAction<ProductType[] | null>>
+}
+
+export  type GraphDataType = {
+    name: string;
+    y: number;
+}[]
+
+export type GraphComponentProps = {
+    graphData: GraphDataOptionTypes | null
+}
+
+export type GraphDataOptionTypes = {
+    graphType: string
+    data: GraphDataType
 }

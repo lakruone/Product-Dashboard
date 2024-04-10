@@ -1,10 +1,11 @@
 import { Box, Button, Checkbox, FormControl, InputLabel, ListItemText, MenuItem, OutlinedInput, Select, SelectChangeEvent, Typography } from "@mui/material"
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { FilterPanelProps, ProductType } from "../types";
 import { CategoryContext } from "../context/CategoryContext";
 import { ProductContext } from "../context/ProductContext";
+import { CHART_TYPES } from "../constants";
 
-const FilterPanel = ({categories}: FilterPanelProps) => {
+const FilterPanel = ({categories, setGraphData}: FilterPanelProps) => {
   const [selectedProducts, setSelectedProducts] = useState<ProductType[]>([]);
 
   const categoryContext = useContext(CategoryContext);
@@ -19,6 +20,26 @@ const FilterPanel = ({categories}: FilterPanelProps) => {
     event.preventDefault();
     categoryContext.setCategory(event.target.value)    
     setSelectedProducts([]);
+  }
+
+  useEffect(()=> {
+    if (categories?.length) generateGraphData()
+
+  },[categories]);
+
+  const generateGraphData = () => {
+    if (categoryContext.category === "" && categories.length) {
+     const graphData = {
+        graphType: CHART_TYPES.PIE,
+        data: categories.map(category => {
+          return {
+            name: category,
+            y: 1
+          }
+        })
+      }
+      setGraphData(graphData);
+    }
   }
 
   // check if selected products empty and category is selected => then show pie chart for all products related to that category
