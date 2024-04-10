@@ -5,7 +5,6 @@ export type UseFetchProps = {
 }
 
 export type FilterPanelProps = {
-    categories: string[],
     setGraphData: React.Dispatch<React.SetStateAction<GraphDataOptionTypes | null>>
 }
 
@@ -44,5 +43,7 @@ export type GraphComponentProps = {
 
 export type GraphDataOptionTypes = {
     graphType: string
+    graphTitle: string
+    yAxisTitle?: string
     data: GraphDataType
 }

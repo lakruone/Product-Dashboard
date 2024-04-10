@@ -1,17 +1,12 @@
 import { Box } from '@mui/material'
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official'
-import { CHART_TYPES } from '../constants';
 import { GraphComponentProps, GraphDataOptionTypes } from '../types';
 
-const productLabels = ['Arsenal', 'Chelsea']
-
-
 function generateGraphOptions(graphData: GraphDataOptionTypes) {
-    // TODO: change title of the graph accordingly
     const options = {
         title: {
-        text: 'Products in selected Category',
+        text: graphData.graphTitle,
         align: 'left'
         },
         chart: {
@@ -19,11 +14,11 @@ function generateGraphOptions(graphData: GraphDataOptionTypes) {
         },
         yAxis: {
             title: {
-                text: 'Smartphones'
+                text: graphData.yAxisTitle
             }
         },
         xAxis: {
-            categories: productLabels
+            categories: graphData.data.map(obj => obj.name)
         },
         series: [{
             data: graphData.data

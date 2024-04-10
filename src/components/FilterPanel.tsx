@@ -1,36 +1,47 @@
 import { Box, Button, Checkbox, FormControl, InputLabel, ListItemText, MenuItem, OutlinedInput, Select, SelectChangeEvent, Typography } from "@mui/material"
-import { useContext, useEffect, useState } from "react"
-import { FilterPanelProps, ProductType } from "../types";
-import { CategoryContext } from "../context/CategoryContext";
-import { ProductContext } from "../context/ProductContext";
-import { CHART_TYPES } from "../constants";
+import { useEffect, useState } from "react"
+import { FilterPanelProps, GraphDataOptionTypes, ProductType } from "../types";
+import { CHART_TYPES, ENDPOINTS } from "../constants";
+import { useFetch } from "../hooks/useFetch";
 
-const FilterPanel = ({categories, setGraphData}: FilterPanelProps) => {
+const FilterPanel = ({ setGraphData }: FilterPanelProps) => {
   const [selectedProducts, setSelectedProducts] = useState<ProductType[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
 
-  const categoryContext = useContext(CategoryContext);
-  const productContext = useContext(ProductContext);
+  const {data: categories} = useFetch<string[]>({ endpoint: ENDPOINTS.getCategories });
+  const {data: productsResponse, isLoading, error} = useFetch<{ products: ProductType[]}>({ endpoint: ENDPOINTS.getProductsByCategory, pathParam: { category: selectedCategory },  dependencies: [selectedCategory] });
+  const products = productsResponse?.products || [];
+
+  useEffect(()=> {
+    if (categories?.length && selectedCategory === "") generateGraphData()
+  },[categories, selectedCategory]);
 
   const handleChange = (event: SelectChangeEvent<typeof selectedProducts>) => {
     const { value } = event.target;
     setSelectedProducts(typeof value === 'string' ? [] : value,);
   };
 
-  const handleCategory = async(event: SelectChangeEvent<string>) => {
-    event.preventDefault();
-    categoryContext.setCategory(event.target.value)    
+  const handleCategory = (event: SelectChangeEvent<string>) => {
+    setSelectedCategory(event.target.value)    
     setSelectedProducts([]);
   }
 
-  useEffect(()=> {
-    if (categories?.length) generateGraphData()
+  const handleClear = () => {
+    setSelectedProducts([]);
+    setSelectedCategory("");
+  }
 
-  },[categories]);
+  const handleRunReport = () => {
+    generateGraphData();
+  }
 
   const generateGraphData = () => {
-    if (categoryContext.category === "" && categories.length) {
-     const graphData = {
+    let graphData = {} as GraphDataOptionTypes;  
+    
+    if (selectedCategory === "" && categories.length) {
+      graphData = {
         graphType: CHART_TYPES.PIE,
+        graphTitle: 'Categories',
         data: categories.map(category => {
           return {
             name: category,
@@ -39,17 +50,43 @@ const FilterPanel = ({categories, setGraphData}: FilterPanelProps) => {
         })
       }
       setGraphData(graphData);
+    } else if(selectedProducts.length) {
+      graphData = {
+        graphType: CHART_TYPES.COLUMN,
+        graphTitle: 'Products in selected Category',
+        yAxisTitle: selectedCategory,
+        data: selectedProducts.map(product => {
+          return {
+            name: product.title,
+            y: product.price
+          }
+        })
+      }
+      setGraphData(graphData);
+
+    } else if (selectedCategory && products) {
+      graphData = {
+        graphType: CHART_TYPES.COLUMN,
+        graphTitle: 'Products in selected Category',
+        yAxisTitle: selectedCategory,
+        data: products.map(product => {
+          return {
+            name: product.title,
+            y: product.price
+          }
+        })
+      }
+      setGraphData(graphData);
+    } else {
+      setGraphData(null)
     }
   }
 
-  // check if selected products empty and category is selected => then show pie chart for all products related to that category
-
-
   return (
-    <Box minWidth={'250px'} height={'calc(100vh - 70px)'} border={'1px solid grey'} borderRadius={2} p={'20px'} >
+    <Box minWidth={'250px'} maxWidth={'250px'} height={'calc(100vh - 70px)'} border={'1px solid grey'} borderRadius={2} p={'20px'} >
       <Box display={'flex'} justifyContent={'space-between'} paddingBottom={'35px'}>
         <Typography variant="h4">Filters</Typography>
-        <Button variant="text" sx={{textTransform: 'none'}}>Clear</Button>
+        <Button variant="text" sx={{textTransform: 'none'}} onClick={handleClear}>Clear</Button>
       </Box>
       <Box display={"flex"} flexDirection={'column'} gap={'20px'}> 
         <FormControl>
@@ -57,7 +94,7 @@ const FilterPanel = ({categories, setGraphData}: FilterPanelProps) => {
           <Select
             labelId="category-select-label"
             id="category-select"
-            value={categoryContext.category}
+            value={selectedCategory}
             onChange={handleCategory}
             input={<OutlinedInput label="Select Category" />}
             fullWidth
@@ -77,12 +114,11 @@ const FilterPanel = ({categories, setGraphData}: FilterPanelProps) => {
             value={selectedProducts}
             onChange={handleChange}
             input={<OutlinedInput label="Select Product" />}
-            // renderValue={(selected) => selected.join(', ')}
             renderValue={(selected) => selected.map(product => product.title).join(', ')}
             fullWidth
-            disabled={categoryContext.category === ""}
+            disabled={selectedCategory === ""}
           >
-          {productContext?.products?.map((product) => (
+          {products.map((product) => (
             <MenuItem key={product.id} value={product}>
               <Checkbox checked={selectedProducts.indexOf(product) > -1} />
               <ListItemText primary={product.title} />
@@ -92,7 +128,14 @@ const FilterPanel = ({categories, setGraphData}: FilterPanelProps) => {
         </FormControl>
       </Box> 
      
-      <Button variant="contained" sx={{textTransform: 'none', position:'absolute', bottom: '0', width: '250px', height:'50px' }} >Run Report</Button>
+      <Button
+        onClick={handleRunReport} 
+        disabled={selectedCategory === ""}
+        variant="contained" 
+        sx={{textTransform: 'none', position:'absolute', bottom: '0', width: '250px', height:'50px' }}
+      >
+        Run Report
+      </Button>
     </Box>
   )
 }
