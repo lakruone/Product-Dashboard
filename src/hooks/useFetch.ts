@@ -4,7 +4,7 @@ import { UseFetchProps } from "../types";
 // TODO: move this to a api.ts file
 function getUrlWithPathParam(url: string, pathParam: Record<string, unknown> | undefined) {
   if (!pathParam) return url;
-
+  
   const spited = url.split(/[{}]/);
   return spited.reduce((acc, i) => {
     if (pathParam[i]) {
@@ -15,9 +15,9 @@ function getUrlWithPathParam(url: string, pathParam: Record<string, unknown> | u
   }, '');
 }
 
-export const useFetch = ({ endpoint, pathParam }: UseFetchProps ) => {
+export const useFetch = <T>({ endpoint, pathParam, dependencies = [] }: UseFetchProps ) => {
 
-  const [data, setData] = useState([]);
+  const [data, setData] = useState(null as T);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<null | Error>(null)
 
@@ -26,7 +26,6 @@ export const useFetch = ({ endpoint, pathParam }: UseFetchProps ) => {
       setIsLoading(true);
       try {
         const response = await fetch(`https://dummyjson.com/${getUrlWithPathParam(endpoint,pathParam)}`).then(res => res.json());
-        console.log(response);
         
         setData(response)
       } catch (error: any) {
@@ -36,7 +35,7 @@ export const useFetch = ({ endpoint, pathParam }: UseFetchProps ) => {
       }
     }
     getData();
-  },[]);
+  }, dependencies);
 
   return {data, isLoading, error }
 }
