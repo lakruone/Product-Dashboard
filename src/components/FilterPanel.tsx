@@ -1,38 +1,56 @@
-import { Box, Button, Checkbox, FormControl, InputLabel, ListItemText, MenuItem, OutlinedInput, Select, SelectChangeEvent, Typography } from "@mui/material"
+import { Box, Button, Checkbox, CircularProgress, FormControl, InputLabel, ListItemText, MenuItem, OutlinedInput, Select, SelectChangeEvent, Typography } from "@mui/material"
 import { useEffect, useState } from "react"
 import { FilterPanelProps, GraphDataOptionTypes, ProductType } from "../types";
 import { CHART_TYPES, ENDPOINTS } from "../constants";
 import { useFetch } from "../hooks/useFetch";
 
-const FilterPanel = ({ setGraphData }: FilterPanelProps) => {
+const barChartDataLabelOptions = {
+  enabled: true,
+  format: '{point.y}$',
+  style: {
+      textOutline: 'none'
+  }
+}
+
+const FilterPanel = ({ setGraphData, setLoading, loading }: FilterPanelProps) => {
   const [selectedProducts, setSelectedProducts] = useState<ProductType[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
   const {data: categories} = useFetch<string[]>({ endpoint: ENDPOINTS.getCategories });
-  const {data: productsResponse, isLoading, error} = useFetch<{ products: ProductType[]}>({ endpoint: ENDPOINTS.getProductsByCategory, pathParam: { category: selectedCategory },  dependencies: [selectedCategory] });
+  const {data: productsResponse} = useFetch<{ products: ProductType[]}>({ endpoint: ENDPOINTS.getProductsByCategory, pathParam: { category: selectedCategory },  dependencies: [selectedCategory] });
   const products = productsResponse?.products || [];
 
   useEffect(()=> {
     if (categories?.length && selectedCategory === "") generateGraphData()
   },[categories, selectedCategory]);
 
-  const handleChange = (event: SelectChangeEvent<typeof selectedProducts>) => {
+  const handleProductChange = (event: SelectChangeEvent<typeof selectedProducts>) => {
     const { value } = event.target;
     setSelectedProducts(typeof value === 'string' ? [] : value,);
+    setIsButtonDisabled(false);
   };
 
-  const handleCategory = (event: SelectChangeEvent<string>) => {
+  const handleCategoryChange = (event: SelectChangeEvent<string>) => {
     setSelectedCategory(event.target.value)    
     setSelectedProducts([]);
+    setIsButtonDisabled(false);
   }
 
   const handleClear = () => {
     setSelectedProducts([]);
     setSelectedCategory("");
+    setIsButtonDisabled(true);
   }
 
   const handleRunReport = () => {
+    setLoading(true);
+    setIsButtonDisabled(true);
     generateGraphData();
+
+    setTimeout(() => {
+      setLoading(false);
+    }, 3000);
   }
 
   const generateGraphData = () => {
@@ -58,7 +76,8 @@ const FilterPanel = ({ setGraphData }: FilterPanelProps) => {
         data: selectedProducts.map(product => {
           return {
             name: product.title,
-            y: product.price
+            y: product.price,
+            dataLabels: barChartDataLabelOptions
           }
         })
       }
@@ -72,7 +91,8 @@ const FilterPanel = ({ setGraphData }: FilterPanelProps) => {
         data: products.map(product => {
           return {
             name: product.title,
-            y: product.price
+            y: product.price,
+            dataLabels: barChartDataLabelOptions
           }
         })
       }
@@ -83,7 +103,7 @@ const FilterPanel = ({ setGraphData }: FilterPanelProps) => {
   }
 
   return (
-    <Box minWidth={'250px'} maxWidth={'250px'} height={'calc(100vh - 70px)'} border={'1px solid grey'} borderRadius={2} p={'20px'} >
+    <Box minWidth={'250px'} height={'calc(100vh - 70px)'} border={'1px solid grey'} borderRadius={2} p={'20px'} maxWidth={'250px'}>
       <Box display={'flex'} justifyContent={'space-between'} paddingBottom={'35px'}>
         <Typography variant="h4">Filters</Typography>
         <Button variant="text" sx={{textTransform: 'none'}} onClick={handleClear}>Clear</Button>
@@ -95,7 +115,7 @@ const FilterPanel = ({ setGraphData }: FilterPanelProps) => {
             labelId="category-select-label"
             id="category-select"
             value={selectedCategory}
-            onChange={handleCategory}
+            onChange={handleCategoryChange}
             input={<OutlinedInput label="Select Category" />}
             fullWidth
           >
@@ -112,7 +132,7 @@ const FilterPanel = ({ setGraphData }: FilterPanelProps) => {
             id="product-multiple-select"
             multiple
             value={selectedProducts}
-            onChange={handleChange}
+            onChange={handleProductChange}
             input={<OutlinedInput label="Select Product" />}
             renderValue={(selected) => selected.map(product => product.title).join(', ')}
             fullWidth
@@ -130,9 +150,10 @@ const FilterPanel = ({ setGraphData }: FilterPanelProps) => {
      
       <Button
         onClick={handleRunReport} 
-        disabled={selectedCategory === ""}
+        disabled={isButtonDisabled}
         variant="contained" 
         sx={{textTransform: 'none', position:'absolute', bottom: '0', width: '250px', height:'50px' }}
+        startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
       >
         Run Report
       </Button>

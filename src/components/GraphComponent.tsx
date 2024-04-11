@@ -1,4 +1,4 @@
-import { Box } from '@mui/material'
+import { Box, CircularProgress } from '@mui/material'
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official'
 import { GraphComponentProps, GraphDataOptionTypes } from '../types';
@@ -7,7 +7,13 @@ function generateGraphOptions(graphData: GraphDataOptionTypes) {
     const options = {
         title: {
         text: graphData.graphTitle,
-        align: 'left'
+        align: 'left',
+        },
+        legend: {
+            enabled: false,
+        },
+        tooltip: {
+            enabled: false,
         },
         chart: {
             type: graphData.graphType,
@@ -29,13 +35,13 @@ function generateGraphOptions(graphData: GraphDataOptionTypes) {
 }
 
 
-const GraphComponent = ({graphData}: GraphComponentProps) => {
+const GraphComponent = ({graphData, loading}: GraphComponentProps) => {    
   return (
     <Box width={'100%'} display="flex" alignItems="center" justifyContent="center" >
-        {graphData?.data && <HighchartsReact
+        {(graphData?.data && !loading) ? <HighchartsReact
             highcharts={Highcharts}
             options={generateGraphOptions(graphData)}
-        />}
+        />: <CircularProgress size={80} />}
     </Box>
   )
 }

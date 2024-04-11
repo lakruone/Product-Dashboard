@@ -6,11 +6,12 @@ import { GraphDataOptionTypes } from '../types';
 
 const Dashboard = () => {
   const [graphData, setGraphData] = useState<GraphDataOptionTypes | null>(null);
+  const [loading, setLoading] = useState(false);
  
   return (
     <Box display={'flex'} gap={'15px'}>
-        <FilterPanel setGraphData={setGraphData}/>
-        <GraphComponent graphData={graphData}/>
+        <FilterPanel setGraphData={setGraphData} setLoading={setLoading} loading={loading}/>
+        <GraphComponent graphData={graphData} loading={loading}/>
     </Box>
   )
 }
