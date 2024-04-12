@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { UseFetchProps } from "../types";
 import { toast } from "react-toastify";
 import { getUrlWithPathParam } from "../utils/api";
+import { BASE_URL } from "../constants";
 
 export const useFetch = <T>({ endpoint, pathParam, dependencies = [] }: UseFetchProps ) => {
 
@@ -13,7 +14,7 @@ export const useFetch = <T>({ endpoint, pathParam, dependencies = [] }: UseFetch
     async function getData() {
       setIsLoading(true);
       try {
-        const response = await fetch(`https://dummyjson.com/${getUrlWithPathParam(endpoint,pathParam)}`).then(res => res.json());
+        const response = await fetch(`${BASE_URL}${getUrlWithPathParam(endpoint,pathParam)}`).then(res => res.json());
         
         setData(response)
       } catch (error: any) {

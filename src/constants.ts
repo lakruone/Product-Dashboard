@@ -1,6 +1,8 @@
+export const BASE_URL = "https://dummyjson.com";
+
 export const ENDPOINTS = {
-  getCategories: 'products/categories',
-  getProductsByCategory: 'products/category/{category}'
+  getCategories: '/products/categories',
+  getProductsByCategory: '/products/category/{category}'
 }
 
 export const CHART_TYPES = {
