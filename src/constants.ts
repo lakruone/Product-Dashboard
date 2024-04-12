@@ -21,7 +21,21 @@ export const  BAR_CHART_DATA_LABEL_OPTIONS = {
 export const  PIE_CHART_DATA_LABEL_OPTIONS =  [
   {
     enabled: true,
-    distance: 2
+    distance: 5,
+    formatter: function () {
+      // Check if the label text is too long
+      if (this.point.name.length > 20) {
+        const splitArray = this.point.name.split(" ");
+        const firstLine = splitArray.slice(0,2).join(" ")
+        const secondLine = splitArray.slice(2).join(" ")
+
+        // Return the formatted label with a line break
+        return `<b>${firstLine}<br>${secondLine}</b>`;
+      } else {
+        // Return the original label if it's not too long
+        return `<b>${this.point.name}</b>`;
+      }
+    }
   },
   {
     enabled: true,
