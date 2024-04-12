@@ -1,39 +1,8 @@
 import { Box, CircularProgress } from '@mui/material'
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official'
-import { GraphComponentProps, GraphDataOptionTypes } from '../types';
-
-function generateGraphOptions(graphData: GraphDataOptionTypes) {
-    const options = {
-        title: {
-        text: graphData.graphTitle,
-        align: 'left',
-        },
-        legend: {
-            enabled: false,
-        },
-        tooltip: {
-            enabled: false,
-        },
-        chart: {
-            type: graphData.graphType,
-        },
-        yAxis: {
-            title: {
-                text: graphData.yAxisTitle
-            }
-        },
-        xAxis: {
-            categories: graphData.data.map(obj => obj.name)
-        },
-        series: [{
-            data: graphData.data
-        }],
-    }
-
-    return options
-}
-
+import { GraphComponentProps } from '../types';
+import { generateGraphOptions } from '../utils/GraphOptions';
 
 const GraphComponent = ({graphData, loading}: GraphComponentProps) => {    
   return (

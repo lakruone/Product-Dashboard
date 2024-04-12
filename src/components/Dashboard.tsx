@@ -2,10 +2,10 @@ import { useState } from 'react'
 import { Box } from '@mui/material';
 import FilterPanel from './FilterPanel';
 import GraphComponent from './GraphComponent';
-import { GraphDataOptionTypes } from '../types';
+import { GraphOptionTypes } from '../types';
 
 const Dashboard = () => {
-  const [graphData, setGraphData] = useState<GraphDataOptionTypes | null>(null);
+  const [graphData, setGraphData] = useState<GraphOptionTypes | null>(null);
   const [loading, setLoading] = useState(false);
  
   return (

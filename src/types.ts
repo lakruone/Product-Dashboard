@@ -5,7 +5,7 @@ export type UseFetchProps = {
 }
 
 export type FilterPanelProps = {
-  setGraphData: React.Dispatch<React.SetStateAction<GraphDataOptionTypes | null>>
+  setGraphData: React.Dispatch<React.SetStateAction<GraphOptionTypes | null>>
   setLoading: React.Dispatch<React.SetStateAction<boolean>>
   loading: boolean
 }
@@ -40,13 +40,21 @@ export  type GraphDataType = {
 }[]
 
 export type GraphComponentProps = {
-  graphData: GraphDataOptionTypes | null
+  graphData: GraphOptionTypes | null
   loading: boolean
 }
 
-export type GraphDataOptionTypes = {
+export type GraphOptionTypes = {
   graphType: string
   graphTitle: string
   yAxisTitle?: string
   data: GraphDataType
+}
+
+export type GenerateGraphDataProps = {
+  selectedCategory: string
+  selectedProducts: ProductType[]
+  categories: string[]
+  products: ProductType[]
+  setGraphData:  (value: React.SetStateAction<GraphOptionTypes | null>) => void
 }

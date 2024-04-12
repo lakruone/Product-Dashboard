@@ -1,16 +1,30 @@
 import './App.css'
-import { CategoryContextProvider } from './context/CategoryContext'
 import Dashboard from './components/Dashboard'
-import { ProductContextProvider } from './context/ProductContext'
+import { ToastContainer } from 'react-toastify'
+import CloseIcon from '@mui/icons-material/Close';
+import 'react-toastify/dist/ReactToastify.min.css';
 
 function App() {
 
   return (
-      <CategoryContextProvider>
-        <ProductContextProvider>
-          <Dashboard/>
-        </ProductContextProvider>
-      </CategoryContextProvider>
+    <>
+      <Dashboard/>
+      <ToastContainer
+        className="toast-custom"
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar
+        closeOnClick
+        newestOnTop={false}
+        rtl={false}
+        pauseOnHover
+        icon={({ type }) => {
+          if (type === "error") return <CloseIcon fontSize='small'/>;
+        }}
+      />
+      <ToastContainer />
+    </>
+       
   )
 }
 
