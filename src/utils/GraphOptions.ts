@@ -1,4 +1,4 @@
-import { BAR_CHART_DATA_LABEL_OPTIONS, CHART_TYPES } from "../constants"
+import { BAR_CHART_DATA_LABEL_OPTIONS, CHART_TYPES, PIE_CHART_DATA_LABEL_OPTIONS } from "../constants"
 import { GenerateGraphDataProps, GraphOptionTypes } from "../types"
 
 
@@ -36,7 +36,7 @@ export const generateGraphOptions = (graphData: GraphOptionTypes) => {
 export const generateGraphData = ({selectedCategory, selectedProducts, categories, products, setGraphData }: GenerateGraphDataProps) => {
     let graphData = {} as GraphOptionTypes;  
     
-    if (selectedCategory === "" && categories.length) {
+    if (selectedCategory === "" && categories.length) { // checks all dropdown are empty
       graphData = {
         graphType: CHART_TYPES.PIE,
         graphTitle: 'Categories',
@@ -48,7 +48,7 @@ export const generateGraphData = ({selectedCategory, selectedProducts, categorie
         })
       }
       setGraphData(graphData);
-    } else if(selectedProducts.length) {
+    } else if (selectedProducts.length) { // checks products are selected
       graphData = {
         graphType: CHART_TYPES.COLUMN,
         graphTitle: 'Products in selected Category',
@@ -63,16 +63,15 @@ export const generateGraphData = ({selectedCategory, selectedProducts, categorie
       }
       setGraphData(graphData);
 
-    } else if (selectedCategory && products) {
+    } else if (selectedCategory && products) {  // checks only category is selected
       graphData = {
-        graphType: CHART_TYPES.COLUMN,
+        graphType: CHART_TYPES.PIE,
         graphTitle: 'Products in selected Category',
-        yAxisTitle: selectedCategory,
         data: products.map(product => {
           return {
             name: product.title,
             y: product.price,
-            dataLabels: BAR_CHART_DATA_LABEL_OPTIONS
+            dataLabels: PIE_CHART_DATA_LABEL_OPTIONS
           }
         })
       }

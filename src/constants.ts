@@ -17,3 +17,19 @@ export const  BAR_CHART_DATA_LABEL_OPTIONS = {
       textOutline: 'none'
   }
 }
+
+export const  PIE_CHART_DATA_LABEL_OPTIONS =  [
+  {
+    enabled: true,
+    distance: 2
+  },
+  {
+    enabled: true,
+    distance: -30,
+    format: '{point.y}$',
+    style: {
+      color: 'black',
+      textOutline: 'white',
+    }
+  }
+]

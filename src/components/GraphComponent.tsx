@@ -3,6 +3,9 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official'
 import { GraphComponentProps } from '../types';
 import { generateGraphOptions } from '../utils/GraphOptions';
+import accessibility from 'highcharts/modules/accessibility';
+
+accessibility(Highcharts);
 
 const GraphComponent = ({graphData, loading}: GraphComponentProps) => {    
   return (
