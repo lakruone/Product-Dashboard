@@ -5,6 +5,7 @@ import GraphComponent from './GraphComponent';
 import { GraphOptionTypes } from '../types';
 
 const Dashboard = () => {
+  // test comment
   const [graphData, setGraphData] = useState<GraphOptionTypes | null>(null);
   const [loading, setLoading] = useState(false);
  
